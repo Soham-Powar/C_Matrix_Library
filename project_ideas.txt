@@ -1,2 +1,4 @@
 1. Expense Manager
 2. Timetable Scheduler
+
+The idea of making an C library for matrix operations was finalized using matrix adt.
