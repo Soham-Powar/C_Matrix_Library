@@ -1,1 +1,7 @@
+C_Matrix_Library
 
+This project aims to develop a dedicated MATRIX library for C programming language as it doesn't have one.
+A special ADT(abstract data type) for MATRIX would be declared.
+Different operations on that ADT would also be defined.
+
+Note: This description is intended to change with time, please don't consider it as final
