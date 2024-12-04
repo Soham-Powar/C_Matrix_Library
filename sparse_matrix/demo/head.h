@@ -3,6 +3,7 @@
 #include <stdbool.h>
 
 //renaming some of the data types which would be mostly used by us
+typedef short int sint;
 typedef long int lint;
 typedef long long int llint;
 typedef unsigned long int ulint;
@@ -54,6 +55,10 @@ typedef struct CSRSparse {
     ulint *row_index;
 } CSRSparse;
 
+sint _flag = 0;
+
+void initSparseMat(SparseMat *mat, ulint rows, ulint cols, sint imptype);
+
 // make a init function to initialise the matrix
     // the function would take arguments like rows, cols, sparsemat address, implementation type.
 /*
@@ -77,7 +82,9 @@ typedef struct CSRSparse {
  *              //readAOL(AOLSparse **mat, int rows, int cols int *nnz)
  *          }
  *          else if(mat->struct[1]) {
- *              //similar 
+ *              //read the matrix using AOL and then convert it to COO
+ *              //first use the function readAOL() and then make a function 
+ *              //to convert e.g. AOLToCOO() 
  *          }
  *          else {
  *              similar
