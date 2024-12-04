@@ -1,9 +1,13 @@
-Naming structures:
-  The structure names should be written in PascalCase.
-  e.g. typedef struct SparseMat { ... } SparseMat;
+Naming variables:
+  The variable names should be written in snake_case.
+  e.g. int variable_name;
 
 Naming functions:
   Functions "usable by the user" using the library should be written in camelCase.
   e.g. void functionName() { ... }
   Functions "used only in the library" should also be written in camelCase but should start with an underscore_.
   e.g. void _libraryOnlyFunction() { ... }
+
+Naming structures:
+  The structure names should be written in PascalCase.
+  e.g. typedef struct SparseMat { ... } SparseMat;
