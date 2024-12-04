@@ -1,6 +1,7 @@
 Naming variables:
   The variable names should be written in snake_case.
   e.g. int variable_name;
+  Global variables used in the library should start with underscore_.
 
 Naming functions:
   Functions "usable by the user" using the library should be written in camelCase.
