@@ -1,0 +1,5 @@
+To give an error set the following numbers in global '_flag' variable.
+1 - for general init function errors
+  0000 - success, no message shown by checkErr()
+  1001 - invalid value given for 'imptype' in function paramenters
+  1002 - calloc error, most probably heap full
