@@ -42,7 +42,7 @@ typedef struct CSRNode {
 } CSRNode;
 
 typedef struct AOLSparse {
-    AOLNode *row;
+    AOLNode **row;
 } AOLSparse;
 
 typedef struct COOSparse {
