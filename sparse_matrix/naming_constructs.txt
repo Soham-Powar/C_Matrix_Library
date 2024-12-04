@@ -1,6 +1,6 @@
 Naming structures:
-  The structure names should start with a CAPITAL LETTER and continue onwards with small letters.
-  e.g. typedef struct Sparse { ... } Sparse;
+  The structure names should be written in PascalCase.
+  e.g. typedef struct SparseMat { ... } SparseMat;
 
 Naming functions:
   Functions "usable by the user" using the library should be written in camelCase.
