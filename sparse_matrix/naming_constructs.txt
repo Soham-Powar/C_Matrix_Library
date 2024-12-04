@@ -1,0 +1,9 @@
+Naming structures:
+  The structure names should start with a CAPITAL LETTER and continue onwards with small letters.
+  e.g. typedef struct Sparse { ... } Sparse;
+
+Naming functions:
+  Functions "usable by the user" using the library should be written in camelCase.
+  e.g. void functionName() { ... }
+  Functions "used only in the library" should also be written in camelCase but should start with an underscore_.
+  e.g. void _libraryOnlyFunction() { ... }
