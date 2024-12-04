@@ -1,0 +1,6 @@
+While saving your changes to the repository:
+  1. The change should be a considerable amount of code. More than 10-15 lines.
+  2. Always check that your code doesn't give errors with the already present code.
+  3. Make sure your code follows the naming conventions.
+
+Feel free to add to this file if you discover any new ways of reducing clashes while collaborating on github
