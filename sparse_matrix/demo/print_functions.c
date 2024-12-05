@@ -2,7 +2,11 @@
 
 void _printAOL(SparseMat *mat) {
     if (mat == NULL || mat->aol_mat == NULL) {
-        _flag = 3002; // matrix contains no data;
+        _flag = 3001; // matrix contains no data;
+        return;
+    }
+    else if(mat->nnz == 0) {
+        printf("Matrix empty\n");
         return;
     }
 
@@ -12,7 +16,7 @@ void _printAOL(SparseMat *mat) {
         AOLNode *tempNode = temp->rows[i];
         for (ulint colIndex = 0; colIndex < mat->cols; colIndex++) {
             if (tempNode != NULL && tempNode->col == colIndex) {
-                printf("%d ", tempNode->data);
+                printf("%ld ", tempNode->data);
                 tempNode = tempNode->next;
             } else {
                 printf("0 ");
@@ -28,10 +32,10 @@ void printSparseMat(SparseMat *mat) {
         _printAOL(mat);
     }
     else if(mat->imptype == 1) {
-        _printCOO();
+        //_printCOO();
     }
     else if(mat->imptype == 2) {
-        _printCSR();
+        //_printCSR();
     }
     else {
         _flag = 3001;//matrix not initialised or initialised incorrectly
