@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "head.h"
+
 void printCOO(SparseMat *mat) {
     if (mat == NULL || mat->coo_mat == NULL || mat->coo_mat->arr == NULL) {
         printf("Matrix is not initialized or is empty.\n");
