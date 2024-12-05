@@ -12,7 +12,7 @@ void printAOL(SparseMat *mat) {
     AOLSparse *temp = mat->aol_mat;
 
     for (ulint i = 0; i < mat->rows; i++) {
-        AOLNode *tempNode = temp->row[i];
+        AOLNode *tempNode = temp->rows[i];
         for (ulint colIndex = 0; colIndex < mat->cols; colIndex++) {
             if (tempNode != NULL && tempNode->col == colIndex) {
                 printf("%d ", tempNode->data);

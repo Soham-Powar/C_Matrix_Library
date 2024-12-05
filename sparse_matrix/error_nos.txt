@@ -7,4 +7,4 @@ To give an error set the following numbers in global '_flag' variable.
 2 - for general read function errors  
   0000 - success, no message shown by checkErr()
   2001 - matrix initialised incorrectly or not initialised at all
-  2002 - sufficient data not provided while reading matrix
+  2002 - sufficient data not provided while reading matrix, or invalid data provided

@@ -5,7 +5,7 @@
 
 void printCSR(SparseMat *mat) {
     if (mat == NULL || mat->csr_mat == NULL || mat->csr_mat->arr == NULL ||
-        mat->csr_mat->row_index == NULL) {
+        mat->csr_mat->row_entries == NULL) {
         printf("Matrix is not initialized or empty.\n");
         return;
     }
@@ -17,7 +17,7 @@ void printCSR(SparseMat *mat) {
         for (ulint j = 0; j < mat->cols; j++) {
             // Check if the current column has a non-zero entry
             if (idx < mat->nnz && j == csr->arr[idx].col &&
-                idx >= csr->row_index[i] && idx < csr->row_index[i + 1]) {
+                idx >= csr->row_entries[i] && idx < csr->row_entries[i + 1]) {
                 printf("%d ", csr->arr[idx].data);
                 idx++;
             } else {

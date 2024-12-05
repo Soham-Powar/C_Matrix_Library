@@ -1,19 +1,11 @@
 #include "head.h"
 
-void _readCSR(SparseMat *mat) {
-    _readAOL(&(mat->aol_mat), mat->rows, mat->cols, mat->nnz);
-    //convert aol to csr
-    //delete aol
-}
-
-void _readCOO(SparseMat *mat) {
-    _readAOL(&(mat->aol_mat), mat->rows, mat->cols, mat->nnz);
-    //convert aol to csr
-    //delete aol
-}
-
 AOLNode *_newAOLNode(lint data, ulint col) {
     AOLNode *new = (AOLNode *) malloc(sizeof(AOLNode));
+    if(new == NULL) {
+        _flag = 2003;
+        return NULL;
+    }
     new->data = data;
     new->col = col;
     new->next = NULL;
@@ -22,7 +14,7 @@ AOLNode *_newAOLNode(lint data, ulint col) {
 
 void _readAOL(AOLSparse **mat, ulint rows, ulint cols, ulint *nnz) {
     //in function variables
-    AOLNode *current = NULL, *newNode;
+    AOLNode **current = NULL, *newNode;
     lint data;
     ulint i, j;
     //actual code
@@ -32,12 +24,14 @@ void _readAOL(AOLSparse **mat, ulint rows, ulint cols, ulint *nnz) {
             if(scanf("%ld", &data) > 0) {
                 if(data != 0) {
                     newNode = _newAOLNode(data, j);
-                    if(current == NULL) {
-                        current = newNode;
+                    if(newNode == NULL)
+                        return;
+                    else if((*current) == NULL) {
+                        (*current) = newNode;
                     }
                     else {
-                        current->next = newNode;
-                        current = current->next;
+                        (*current)->next = newNode;
+                        current = &(*current)->next;
                     }
                 }
                 else {
@@ -46,10 +40,28 @@ void _readAOL(AOLSparse **mat, ulint rows, ulint cols, ulint *nnz) {
             }
             else {
                 _flag = 2002;
+                return;
             }
         }
     }
+    _flag = 0000;
+    return;
 }
+
+void _readCSR(SparseMat *mat) {
+    _readAOL(&(mat->aol_mat), mat->rows, mat->cols, &mat->nnz);
+    //convert aol to csr
+    //delete aol
+    return;
+}
+
+void _readCOO(SparseMat *mat) {
+    _readAOL(&(mat->aol_mat), mat->rows, mat->cols, &mat->nnz);
+    //convert aol to csr
+    //delete aol
+    return;
+}
+
 
 
 
@@ -59,16 +71,17 @@ void readSparseMat(SparseMat *mat) {
     if(mat->rows == 0 || mat->cols == 0) {
         _flag = 2001;
     }
-    else if(mat->struct_type[0]) {
-        _readAOL(&(mat->aol_mat), mat->rows, mat->cols, mat->nnz);
+    else if(mat->imptype == 0) {
+        _readAOL(&(mat->aol_mat), mat->rows, mat->cols, &mat->nnz);
     } //read in AOL implementation
-    else if(mat->struct_type[1]) {
+    else if(mat->imptype == 1) {
         _readCOO(mat);
     } //read in COO implementation
-    else if(mat->struct_type[2]) {
+    else if(mat->imptype == 2) {
         _readCSR(mat);
     } //read in CSR implementation
     else {
         _flag = 2001;
     }
+    return;
 }

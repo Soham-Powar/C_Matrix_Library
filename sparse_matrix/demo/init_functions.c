@@ -2,6 +2,10 @@
 
 void _initAOL(AOLSparse **mat, ulint rows) {
     (*mat) = (AOLSparse *) malloc(sizeof(AOLSparse));
+    if(*mat == NULL) {
+        _flag = 1002;
+        return;
+    }
     (*mat)->rows = (AOLNode **) calloc(rows, sizeof(AOLNode));
     if((*mat)->rows == NULL)
         _flag = 1002;
@@ -10,12 +14,20 @@ void _initAOL(AOLSparse **mat, ulint rows) {
 
 void _initCOO(COOSparse **mat) {
     (*mat) = (COOSparse *) malloc(sizeof(COOSparse));
+    if(*mat == NULL) {
+        _flag = 1002;
+        return;
+    }
     (*mat)->arr = NULL;
     return;
 }
 
 void _initCSR(CSRSparse **mat, ulint rows) {
     (*mat) = (CSRSparse *) malloc(sizeof(CSRSparse));
+    if(*mat == NULL) {
+        _flag = 1002;
+        return;
+    }
     (*mat)->arr = NULL;
     (*mat)->row_entries = (ulint *) calloc(rows, sizeof(ulint));
     if((*mat)->row_entries == NULL)
@@ -32,16 +44,10 @@ void _initCSR(CSRSparse **mat, ulint rows) {
  *      no. which can be checked with checkErr().
  */
 void initSparseMat(SparseMat *mat, ulint rows, ulint cols, sint imptype) {
-    sint i;
     mat->rows = rows; //stored the number of rows
     mat->cols = cols; //stored the number of columns
     mat->nnz = 0; //initialized the number of nonzero entries in the matrix to 0
-    for(i = 0; i < 3; i++) {
-        if(i == imptype)
-            mat->struct_type[i] = 1;
-        else    
-            mat->struct_type[i] = 0;
-    } //setting the user needed implementation type as true and rest as false
+    mat->imptype = imptype;
     //making all the different implementation mat pointer point to null initially
     mat->aol_mat = NULL;
     mat->coo_mat = NULL;
@@ -68,12 +74,4 @@ void initSparseMat(SparseMat *mat, ulint rows, ulint cols, sint imptype) {
     return;
 }
 
-int main() {
-    SparseMat mat;
-    initSparseMat(&mat, 5, 5, 0); //init 5 * 5 matrix using aol
-    readSparseMat(&mat); //just read the matrix or convert it
-    printSparseMat(&mat); //just print the matrix
-    deleteSparseMat(&mat);
-    return 0;
-}
 

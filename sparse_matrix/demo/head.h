@@ -9,22 +9,6 @@ typedef long long int llint;
 typedef unsigned long int ulint;
 typedef unsigned long long int ullint;
 
-/* //simple structure for now
- * while initialising a variable of this structure the user will have to choose according to
- * which data structure(COO, AOL, CSR) does he want to implement the matrix. If he chooses AOL
- * then the rest of the pointer like coo_mat and csr_mat would be null and aol_mat would point to
- * the matrix
- */
-typedef struct SparseMat {
-    ulint rows; //number of rows in the matrix
-    ulint cols; //number of columns in the matrix
-    ulint nnz; //number of nonzero entries in the matrix
-    bool struct_type[3]; //0 index for AOL, 1 index for COO, 2 index for CSR
-    AOLSparse *aol_mat;
-    COOSparse *coo_mat;
-    CSRSparse *csr_mat;
-} SparseMat;
-
 typedef struct AOLNode {
     lint data;
     ulint col;
@@ -57,6 +41,25 @@ typedef struct CSRSparse {
 
 sint _flag = 0;
 
+/* //simple structure for now
+ * while initialising a variable of this structure the user will have to choose according to
+ * which data structure(COO, AOL, CSR) does he want to implement the matrix. If he chooses AOL
+ * then the rest of the pointer like coo_mat and csr_mat would be null and aol_mat would point to
+ * the matrix
+ */
+typedef struct SparseMat {
+    ulint rows; //number of rows in the matrix
+    ulint cols; //number of columns in the matrix
+    ulint nnz; //number of nonzero entries in the matrix
+    //bool struct_type[3]; //0 index for AOL, 1 index for COO, 2 index for CSR
+    sint imptype;
+    AOLSparse *aol_mat;
+    COOSparse *coo_mat;
+    CSRSparse *csr_mat;
+} SparseMat;
+
+
+
 void _initAOL(AOLSparse **mat, ulint rows);
 void _initCOO(COOSparse **mat);
 void _initCSR(CSRSparse **mat, ulint rows);
@@ -67,30 +70,11 @@ void _readCOO(SparseMat *mat);
 void _readAOL(AOLSparse **mat, ulint rows, ulint cols, ulint *nnz);
 void readSparseMat(SparseMat *mat);
 
+void _printCSR();
+void _printCOO();
+void _printAOL();
+void printSparseMat(SparseMat *mat);
 
 
-//make input read and file read function for all the 3 implementations
-// user will basically use a function named readSparseMat(SparseMat *mat) if he wants to read from input given
-// or a function named fileReadSparseMat(SparseMat *mat, //filename) if he wants to read from file given
-// in those function we will check that which implementation we have to use according to the initialisation of sparse mat
-// and then depending on that we will read the matrix from file or input
-//e.g.
 
-/*
- *      readSparseMat(SparseMat *mat) {
- *          if(mat->struct_type[0]) {
- *              //readAOL(AOLSparse **mat, int rows, int cols int *nnz)
- *          }
- *          else if(mat->struct[1]) {
- *              //read the matrix using AOL and then convert it to COO
- *              //first use the function readAOL() and then make a function 
- *              //to convert e.g. AOLToCOO() 
- *          }
- *          else {
- *              similar
- *          }
- *
- *
- * 
- * 
- */
+
