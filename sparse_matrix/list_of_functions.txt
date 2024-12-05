@@ -1,0 +1,29 @@
+
+void _initAOL(AOLSparse **mat, ulint rows);
+void _initCOO(COOSparse **mat);
+void _initCSR(CSRSparse **mat, ulint rows);
+void initSparseMat(SparseMat *mat, ulint rows, ulint cols, sint imptype);
+
+void _readCSR(SparseMat *mat);
+void _readCOO(SparseMat *mat);
+void _readAOL(AOLSparse **mat, ulint rows, ulint cols, ulint *nnz);
+void readSparseMat(SparseMat *mat);
+
+//
+convAOLtoCOO()
+convAOLtoCSR
+convCOOtoAOL
+convCSRtoAOL
+
+//printSparseMat
+    printAOL
+    printCOO
+    printCSR
+
+//sorting:
+    sortCOORowise
+    sortCOOEnrtywise
+    sortCSRRowise
+    sorCSREntrywise
+
+//delete functions

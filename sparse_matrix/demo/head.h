@@ -43,7 +43,7 @@ typedef struct CSRNode {
 } CSRNode;
 
 typedef struct AOLSparse {
-    AOLNode **row;
+    AOLNode **rows;
 } AOLSparse;
 
 typedef struct COOSparse {
@@ -52,23 +52,22 @@ typedef struct COOSparse {
 
 typedef struct CSRSparse {
     CSRNode *arr; //arr stands for array
-    ulint *row_index;
+    ulint *row_entries;
 } CSRSparse;
 
 sint _flag = 0;
 
+void _initAOL(AOLSparse **mat, ulint rows);
+void _initCOO(COOSparse **mat);
+void _initCSR(CSRSparse **mat, ulint rows);
 void initSparseMat(SparseMat *mat, ulint rows, ulint cols, sint imptype);
 
-// make a init function to initialise the matrix
-    // the function would take arguments like rows, cols, sparsemat address, implementation type.
-/*
- *      initSparseMat(SparseMat *mat, ulint rows, ulint cols, int imptype) {
- *          //i will mark imptype index in struct_type array as true and rest as false
- *          //all other implementation type pointers would be NULL, except the required one
- *          // row and column values would have been copied
- *          //nnz = 0;
- *      }
- */
+void _readCSR(SparseMat *mat);
+void _readCOO(SparseMat *mat);
+void _readAOL(AOLSparse **mat, ulint rows, ulint cols, ulint *nnz);
+void readSparseMat(SparseMat *mat);
+
+
 
 //make input read and file read function for all the 3 implementations
 // user will basically use a function named readSparseMat(SparseMat *mat) if he wants to read from input given
@@ -76,6 +75,7 @@ void initSparseMat(SparseMat *mat, ulint rows, ulint cols, sint imptype);
 // in those function we will check that which implementation we have to use according to the initialisation of sparse mat
 // and then depending on that we will read the matrix from file or input
 //e.g.
+
 /*
  *      readSparseMat(SparseMat *mat) {
  *          if(mat->struct_type[0]) {

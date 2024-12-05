@@ -1,6 +1,6 @@
 #include "head.h"
 
-void initAOL(AOLSparse **mat, ulint rows) {
+void _initAOL(AOLSparse **mat, ulint rows) {
     (*mat) = (AOLSparse *) malloc(sizeof(AOLSparse));
     (*mat)->rows = (AOLNode **) calloc(rows, sizeof(AOLNode));
     if((*mat)->rows == NULL)
@@ -8,13 +8,13 @@ void initAOL(AOLSparse **mat, ulint rows) {
     return;
 }
 
-void initCOO(COOSparse **mat) {
+void _initCOO(COOSparse **mat) {
     (*mat) = (COOSparse *) malloc(sizeof(COOSparse));
     (*mat)->arr = NULL;
     return;
 }
 
-void initCSR(CSRSparse **mat, ulint rows) {
+void _initCSR(CSRSparse **mat, ulint rows) {
     (*mat) = (CSRSparse *) malloc(sizeof(CSRSparse));
     (*mat)->arr = NULL;
     (*mat)->row_entries = (ulint *) calloc(rows, sizeof(ulint));
@@ -49,22 +49,31 @@ void initSparseMat(SparseMat *mat, ulint rows, ulint cols, sint imptype) {
     switch(imptype) {
         case 0:
             //initialises the matrix using AOL implementation
-            initAOL(&mat->aol_mat, mat->rows);
+            _initAOL(&mat->aol_mat, mat->rows);
             break;
         case 1:
             //initialises the matrix using COO implementation
-            initAOL(&mat->aol_mat, mat->rows); //for COO you need AOL
-            initCOO(&mat->coo_mat);
+            _initAOL(&mat->aol_mat, mat->rows); //for COO you need AOL
+            _initCOO(&mat->coo_mat);
             break;
         case 2:
             //initialises the matrix using CSR implementation
-            initAOL(&mat->aol_mat, mat->rows); //for CSR you need AOL
-            initCSR(&mat->csr_mat, mat->rows);
+            _initAOL(&mat->aol_mat, mat->rows); //for CSR you need AOL
+            _initCSR(&mat->csr_mat, mat->rows);
             break;
         default:
             //return imptype error
             _flag = 1001;
     }
     return;
+}
+
+int main() {
+    SparseMat mat;
+    initSparseMat(&mat, 5, 5, 0); //init 5 * 5 matrix using aol
+    readSparseMat(&mat); //just read the matrix or convert it
+    printSparseMat(&mat); //just print the matrix
+    deleteSparseMat(&mat);
+    return 0;
 }
 
