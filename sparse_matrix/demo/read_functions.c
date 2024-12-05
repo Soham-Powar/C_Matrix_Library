@@ -19,7 +19,7 @@ void _readAOL(AOLSparse **mat, ulint rows, ulint cols, ulint *nnz) {
     ulint i, j;
     //actual code
     for(i = 0; i < rows; i++) {
-        current = (*mat)->rows[i]; //setting current to start of the row
+        current = &(*mat)->rows[i]; //setting current to start of the row
         for(j = 0; j < cols; j++) {
             if(scanf("%ld", &data) > 0) {
                 if(data != 0) {
@@ -28,10 +28,12 @@ void _readAOL(AOLSparse **mat, ulint rows, ulint cols, ulint *nnz) {
                         return;
                     else if((*current) == NULL) {
                         (*current) = newNode;
+                        *nnz += 1;
                     }
                     else {
                         (*current)->next = newNode;
                         current = &(*current)->next;
+                        *nnz += 1;
                     }
                 }
                 else {
@@ -66,7 +68,7 @@ void _readCOO(SparseMat *mat) {
 
 
 /* this function abstractly reads the sparse matrix. for reading a specific implementation a specific
- * function is include in this function*/
+ * function is included in this function*/
 void readSparseMat(SparseMat *mat) {
     if(mat->rows == 0 || mat->cols == 0) {
         _flag = 2001;
