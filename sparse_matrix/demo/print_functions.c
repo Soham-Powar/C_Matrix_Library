@@ -2,7 +2,7 @@
 
 void _printAOL(SparseMat *mat) {
     if (mat == NULL || mat->aol_mat == NULL) {
-        _flag = 3001; // matrix contains no data;
+        _flag = 0001; // matrix initialised incorrectly
         return;
     }
     else if(mat->nnz == 0) {
@@ -38,7 +38,7 @@ void printSparseMat(SparseMat *mat) {
         //_printCSR();
     }
     else {
-        _flag = 3001;//matrix not initialised or initialised incorrectly
+        _flag = 0001;//matrix not initialised or initialised incorrectly
     }
     return;
 }

@@ -59,7 +59,7 @@ typedef struct SparseMat {
 } SparseMat;
 
 
-
+//function prototypes
 void _initAOL(AOLSparse **mat, ulint rows);
 void _initCOO(COOSparse **mat);
 void _initCSR(CSRSparse **mat, ulint rows);
@@ -70,11 +70,12 @@ void _readCOO(SparseMat *mat);
 void _readAOL(AOLSparse **mat, ulint rows, ulint cols, ulint *nnz);
 void readSparseMat(SparseMat *mat);
 
+void _deleteAOL(SparseMat *mat);
+void _deleteCOO(SparseMat *mat);
+void _deleteCSR(SparseMat *mat);
+void deleteSparseMat(SparseMat *mat);
+
 void _printCSR();
 void _printCOO();
 void _printAOL();
 void printSparseMat(SparseMat *mat);
-
-
-
-

@@ -51,21 +51,30 @@ void _readAOL(AOLSparse **mat, ulint rows, ulint cols, ulint *nnz) {
 }
 
 void _readCSR(SparseMat *mat) {
-    _readAOL(&(mat->aol_mat), mat->rows, mat->cols, &mat->nnz);
-    //convert aol to csr
-    //delete aol
+    //new AOL matrix
+    SparseMat temp;
+    initSparseMat(&temp, mat->rows, mat->cols, 0);
+    readSparseMat(&temp);
+    //convert above AOL to original CSR
+    convAOLtoCSR(&temp, mat);
+    deleteSparseMat(&temp); //delete AOL
     return;
 }
 
+/* as we cannot directly read a matrix to COO and the original matrix is already
+ * initialised for COO, we will create a AOL matrix in the below function then 
+ * convert it to the original COO matrix using a conversion function and afterwards 
+ * delete the AOL matrix*/
 void _readCOO(SparseMat *mat) {
-    _readAOL(&(mat->aol_mat), mat->rows, mat->cols, &mat->nnz);
-    //convert aol to csr
-    //delete aol
+    //new AOL matrix
+    SparseMat temp;
+    initSparseMat(&temp, mat->rows, mat->cols, 0);
+    readSparseMat(&temp);
+    //convert above AOL to original COO
+    convAOLtoCOO(&temp, mat);
+    deleteSparseMat(&temp); //delete AOL
     return;
 }
-
-
-
 
 /* this function abstractly reads the sparse matrix. for reading a specific implementation a specific
  * function is included in this function*/
@@ -74,16 +83,19 @@ void readSparseMat(SparseMat *mat) {
         _flag = 2001;
     }
     else if(mat->imptype == 0) {
+        printf("Input %lu X %lu Matrix\n", mat->rows, mat->rows);
         _readAOL(&(mat->aol_mat), mat->rows, mat->cols, &mat->nnz);
     } //read in AOL implementation
     else if(mat->imptype == 1) {
+        printf("Input %lu X %lu Matrix\n", mat->rows, mat->rows);
         _readCOO(mat);
     } //read in COO implementation
     else if(mat->imptype == 2) {
+        printf("Input %lu X %lu Matrix\n", mat->rows, mat->rows);
         _readCSR(mat);
     } //read in CSR implementation
     else {
-        _flag = 2001;
+        _flag = 0001;
     }
     return;
 }

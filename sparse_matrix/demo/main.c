@@ -1,3 +1,4 @@
+/*head.h*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -58,8 +59,7 @@ typedef struct SparseMat {
     CSRSparse *csr_mat;
 } SparseMat;
 
-
-
+//function prototypes
 void _initAOL(AOLSparse **mat, ulint rows);
 void _initCOO(COOSparse **mat);
 void _initCSR(CSRSparse **mat, ulint rows);
@@ -70,15 +70,17 @@ void _readCOO(SparseMat *mat);
 void _readAOL(AOLSparse **mat, ulint rows, ulint cols, ulint *nnz);
 void readSparseMat(SparseMat *mat);
 
+void _deleteAOL(SparseMat *mat);
+void _deleteCOO(SparseMat *mat);
+void _deleteCSR(SparseMat *mat);
+void deleteSparseMat(SparseMat *mat);
+
 void _printCSR();
 void _printCOO();
 void _printAOL();
 void printSparseMat(SparseMat *mat);
 
-
-
-
-
+/*init_functions.c*/
 
 void _initAOL(AOLSparse **mat, ulint rows) {
     (*mat) = (AOLSparse *) malloc(sizeof(AOLSparse));
@@ -139,12 +141,10 @@ void initSparseMat(SparseMat *mat, ulint rows, ulint cols, sint imptype) {
             break;
         case 1:
             //initialises the matrix using COO implementation
-            _initAOL(&mat->aol_mat, mat->rows); //for COO you need AOL
             _initCOO(&mat->coo_mat);
             break;
         case 2:
             //initialises the matrix using CSR implementation
-            _initAOL(&mat->aol_mat, mat->rows); //for CSR you need AOL
             _initCSR(&mat->csr_mat, mat->rows);
             break;
         default:
@@ -154,8 +154,7 @@ void initSparseMat(SparseMat *mat, ulint rows, ulint cols, sint imptype) {
     return;
 }
 
-
-
+/*read_functions.c*/
 
 AOLNode *_newAOLNode(lint data, ulint col) {
     AOLNode *new = (AOLNode *) malloc(sizeof(AOLNode));
@@ -221,9 +220,6 @@ void _readCOO(SparseMat *mat) {
     return;
 }
 
-
-
-
 /* this function abstractly reads the sparse matrix. for reading a specific implementation a specific
  * function is included in this function*/
 void readSparseMat(SparseMat *mat) {
@@ -231,24 +227,28 @@ void readSparseMat(SparseMat *mat) {
         _flag = 2001;
     }
     else if(mat->imptype == 0) {
+        printf("Input %lu X %lu Matrix\n", mat->rows, mat->rows);
         _readAOL(&(mat->aol_mat), mat->rows, mat->cols, &mat->nnz);
     } //read in AOL implementation
     else if(mat->imptype == 1) {
+        printf("Input %lu X %lu Matrix\n", mat->rows, mat->rows);
         _readCOO(mat);
     } //read in COO implementation
     else if(mat->imptype == 2) {
+        printf("Input %lu X %lu Matrix\n", mat->rows, mat->rows);
         _readCSR(mat);
     } //read in CSR implementation
     else {
-        _flag = 2001;
+        _flag = 0001;
     }
     return;
 }
 
+/*print_functions.c*/
 
 void _printAOL(SparseMat *mat) {
     if (mat == NULL || mat->aol_mat == NULL) {
-        _flag = 3001; // matrix contains no data;
+        _flag = 0001; // matrix initialised incorrectly
         return;
     }
     else if(mat->nnz == 0) {
@@ -274,6 +274,8 @@ void _printAOL(SparseMat *mat) {
 }
 
 void printSparseMat(SparseMat *mat) {
+
+
     if(mat->imptype == 0) {
         _printAOL(mat);
     }
@@ -284,16 +286,116 @@ void printSparseMat(SparseMat *mat) {
         //_printCSR();
     }
     else {
-        _flag = 3001;//matrix not initialised or initialised incorrectly
+        _flag = 0001;//matrix not initialised or initialised incorrectly
     }
+    return;
+}
+
+/*delete_functions.c*/
+
+void _deleteCSR(SparseMat *mat) {
+    //in function variables
+    CSRNode *temp_arr = NULL;
+    ulint *temp_row_entries = NULL;
+    CSRSparse *temp_csr = NULL;
+    //actual code
+    if(mat->csr_mat == NULL) {
+        return;
+    } //checks whether the matrix is already empty
+    else {
+        temp_arr = mat->csr_mat->arr;
+        temp_csr = mat->csr_mat;
+        temp_row_entries = mat->csr_mat->row_entries;
+        mat->csr_mat->arr = NULL;
+        mat->csr_mat->row_entries = NULL;
+        mat->csr_mat = NULL;
+        free(temp_arr);
+        free(temp_csr);
+        free(temp_row_entries);
+    }
+    return;
+}
+
+void _deleteCOO(SparseMat *mat) {
+    //in function variables
+    COONode *temp_arr = NULL;
+    COOSparse *temp_coo = NULL;
+    //actual code
+    if(mat->coo_mat == NULL) {
+        return;
+    } //checks whether the matrix is already empty
+    else {
+        temp_arr = mat->coo_mat->arr;
+        temp_coo = mat->coo_mat;
+        mat->coo_mat->arr = NULL;
+        mat->coo_mat = NULL;
+        free(temp_arr); // frees the coo node array
+        free(temp_coo); // frees the coo structure variable
+    }
+    return;
+}
+
+void _deleteAOL(SparseMat *mat) {
+    //in function variables
+    AOLNode *curr_ent = NULL, *temp = NULL;
+    AOLNode **temp_rows = NULL;
+    AOLSparse *temp_aol = NULL;
+    int i;
+    //actual code
+    if(mat->aol_mat == NULL) {
+        return;
+    } // checks whether the matrix is empty already
+    for(i = 0; i < mat->rows; i++) {
+        curr_ent = mat->aol_mat->rows[i];
+        mat->aol_mat->rows[i] = NULL;
+        while(curr_ent != NULL) {
+            temp = curr_ent;
+            curr_ent = curr_ent->next;
+            free(temp);
+        }
+    } // deletes all the data nodes
+    temp_rows = mat->aol_mat->rows; 
+    free(temp_rows); //deletes the double node pointer array
+    temp_aol = mat->aol_mat;
+    free(temp_aol); //deletes the AOLSparse variable
+    return;
+}
+
+void deleteSparseMat(SparseMat *mat) {
+    if(mat->imptype == 0) {
+        _deleteAOL(mat); 
+    }
+    else if(mat->imptype == 1) {
+        _deleteCOO(mat);
+    }
+    else if(mat->imptype == 2) {
+        _deleteCSR(mat);
+    }
+    else {
+        _flag = 0001;
+    }
+    mat->nnz = 0; //sets the number of non zero entries in the matrix to zero
+    return;
+}
+
+/*******************************************************************/
+
+void checkErr(sint f) {
+    printf("Executed with code: %hd\n", f);
     return;
 }
 
 int main() {
     SparseMat mat;
-    initSparseMat(&mat, 2, 2, 0);
+    initSparseMat(&mat, 3, 3, 0);
+    checkErr(_flag);
     readSparseMat(&mat);
-    //printf("%ld\n", mat.aol_mat->rows[0]->data);
-    //printf("nnz = %lu\n", mat.nnz);
+    checkErr(_flag);
     printSparseMat(&mat);
+    checkErr(_flag);
+    deleteSparseMat(&mat);
+    checkErr(_flag);
+    printSparseMat(&mat);
+    checkErr(_flag);
+    return 0;
 }

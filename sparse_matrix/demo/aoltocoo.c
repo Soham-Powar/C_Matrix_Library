@@ -1,3 +1,4 @@
+#include "head.h"
 // SUGGEST CHANGES/IMPROVEMENTS IF NEEDED.
 
 // case 1:
@@ -23,7 +24,7 @@ void AOLToCOO(SparseMat *mat) {
     ulint indexCOO = 0;
 
     for (ulint i = 0; i < mat->rows; i++) {
-        AOLNode *current = mat->aol_mat->row[i];
+        AOLNode *current = mat->aol_mat->rows[i];
         while (current != NULL) {
             mat->coo_mat->arr[indexCOO].row = i;
             mat->coo_mat->arr[indexCOO].col = current->col;

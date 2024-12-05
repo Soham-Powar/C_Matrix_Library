@@ -59,12 +59,10 @@ void initSparseMat(SparseMat *mat, ulint rows, ulint cols, sint imptype) {
             break;
         case 1:
             //initialises the matrix using COO implementation
-            _initAOL(&mat->aol_mat, mat->rows); //for COO you need AOL
             _initCOO(&mat->coo_mat);
             break;
         case 2:
             //initialises the matrix using CSR implementation
-            _initAOL(&mat->aol_mat, mat->rows); //for CSR you need AOL
             _initCSR(&mat->csr_mat, mat->rows);
             break;
         default:
