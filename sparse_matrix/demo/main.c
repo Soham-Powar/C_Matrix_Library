@@ -75,7 +75,10 @@ void _printCOO();
 void _printAOL();
 void printSparseMat(SparseMat *mat);
 
-//#include "head.h"
+
+
+
+
 
 void _initAOL(AOLSparse **mat, ulint rows) {
     (*mat) = (AOLSparse *) malloc(sizeof(AOLSparse));
@@ -151,7 +154,8 @@ void initSparseMat(SparseMat *mat, ulint rows, ulint cols, sint imptype) {
     return;
 }
 
-//#include "head.h"
+
+
 
 AOLNode *_newAOLNode(lint data, ulint col) {
     AOLNode *new = (AOLNode *) malloc(sizeof(AOLNode));
@@ -179,12 +183,14 @@ void _readAOL(AOLSparse **mat, ulint rows, ulint cols, ulint *nnz) {
                     newNode = _newAOLNode(data, j);
                     if(newNode == NULL)
                         return;
-                    else if(*current == NULL) {
-                        *current = newNode;
+                    else if((*current) == NULL) {
+                        (*current) = newNode;
+                        *nnz += 1;
                     }
                     else {
                         (*current)->next = newNode;
                         current = &(*current)->next;
+                        *nnz += 1;
                     }
                 }
                 else {
@@ -219,7 +225,7 @@ void _readCOO(SparseMat *mat) {
 
 
 /* this function abstractly reads the sparse matrix. for reading a specific implementation a specific
- * function is include in this function*/
+ * function is included in this function*/
 void readSparseMat(SparseMat *mat) {
     if(mat->rows == 0 || mat->cols == 0) {
         _flag = 2001;
@@ -239,9 +245,14 @@ void readSparseMat(SparseMat *mat) {
     return;
 }
 
+
 void _printAOL(SparseMat *mat) {
     if (mat == NULL || mat->aol_mat == NULL) {
-        _flag = 3002; // matrix contains no data;
+        _flag = 3001; // matrix contains no data;
+        return;
+    }
+    else if(mat->nnz == 0) {
+        printf("Matrix empty\n");
         return;
     }
 
@@ -280,13 +291,9 @@ void printSparseMat(SparseMat *mat) {
 
 int main() {
     SparseMat mat;
-    initSparseMat(&mat, 4, 4, 0);
-    printf("flag -> %hd\n", _flag);
+    initSparseMat(&mat, 2, 2, 0);
     readSparseMat(&mat);
-    printf("flag -> %hd\n", _flag);
+    //printf("%ld\n", mat.aol_mat->rows[0]->data);
+    //printf("nnz = %lu\n", mat.nnz);
     printSparseMat(&mat);
-    printf("flag -> %hd\n", _flag);
-    return 0;
 }
-
-
