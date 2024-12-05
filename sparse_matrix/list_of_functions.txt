@@ -9,16 +9,24 @@ void _readCOO(SparseMat *mat);
 void _readAOL(AOLSparse **mat, ulint rows, ulint cols, ulint *nnz);
 void readSparseMat(SparseMat *mat);
 
+void _deleteAOL(SparseMat *mat);
+void _deleteCOO(SparseMat *mat);
+void _deleteCSR(SparseMat *mat);
+void deleteSparseMat(SparseMat *mat);
+
+void printAsAOL();
+void printAsCOO();
+void printAsCSR();
+
+void _printAOL(SparseMat *mat);
+void printSparseMat(SparseMat *mat);
+
 //
 convAOLtoCOO()
 convAOLtoCSR
 convCOOtoAOL
 convCSRtoAOL
 
-//printSparseMat
-    printAOL
-    printCOO
-    printCSR
 
 //sorting:
     sortCOORowise

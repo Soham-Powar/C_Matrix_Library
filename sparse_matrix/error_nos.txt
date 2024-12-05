@@ -1,15 +1,16 @@
 To give an error set the following numbers in global '_flag' variable.
+0 - general 
+  0000 - everyting fine, no message shown by checkErr()
+  0001 - matrix initialised incorrectly or not initialised at all 
+
 1 - for general init function errors
-  0000 - everything fine, no message shown by checkErr()
   1001 - invalid value given for 'imptype' in function paramenters
   1002 - calloc error, most probably heap full
 
-2 - for general read function errors  
-  0000 - everyting fine, no message shown by checkErr()
-  2001 - matrix initialised incorrectly or not initialised at all
+2 - for general read function errors
   2002 - sufficient data not provided while reading matrix, or invalid data provided
   2003 - malloc/ calloc error, most probably heap full
 
 3 - for general write function errors
-  0000 - everything fine, no message shown by checkErr()
-  3001 - matrix initialised incorrectly or not initialised at all
+
+4 - for general arithmetic function errors
