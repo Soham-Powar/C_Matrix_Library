@@ -1,9 +1,6 @@
 What is a sparse matrix?
   Matrix of which most of the entries are 0 is called as sparse. Common criteria to classify a matrix as spare is to check whether the number of non-zero entries in the matrix is nearly equal to the number of rows or columns in the matrix. 
 
-Uses of sparse matrix:
-
-
 Ways of storing:
   1. AOL - Array of Lists(Adjecency List)
   2. COO - Coordinate List
