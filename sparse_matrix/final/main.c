@@ -86,6 +86,16 @@ void printSparseMat(SparseMat *mat);
 void convAOLtoCOO(SparseMat *aol, SparseMat *coo);
 void convAOLtoCSR(SparseMat *aol, SparseMat *csr);
 
+SparseMat *addAOL(SparseMat *mat1, SparseMat *mat2);
+SparseMat *subAOL(SparseMat *mat1, SparseMat *mat2);
+int compareCOO(const void *a, const void *b);
+void transpose(SparseMat *mat);
+void scalarMultiplyAOL(SparseMat *mat, lint scalar);
+SparseMat *dotProductAOL(SparseMat *mat1, SparseMat *mat2);
+SparseMat *_copySparseMatrix(SparseMat *mat);
+bool _isEqual(SparseMat *mat1, SparseMat *mat2);
+bool isSymmetric(SparseMat *mat);
+
 /*******************************************************************/
 //error check
 void checkErr(sint f) {
