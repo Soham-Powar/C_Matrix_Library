@@ -1,3 +1,5 @@
+#include "head.h"
+
 SparseMat *addAOL(SparseMat *mat1, SparseMat *mat2) {
     // Check for dimension mismatch
     if (mat1->rows != mat2->rows || mat1->cols != mat2->cols) {
@@ -22,9 +24,9 @@ SparseMat *addAOL(SparseMat *mat1, SparseMat *mat2) {
     }
 
     for (ulint i = 0; i < rows; i++) {
-        AOLNode *current1 = mat1->aol_mat->row[i];
-        AOLNode *current2 = mat2->aol_mat->row[i];
-        AOLNode **lastPtr = &(result->aol_mat->row[i]);
+        AOLNode *current1 = mat1->aol_mat->rows[i];
+        AOLNode *current2 = mat2->aol_mat->rows[i];
+        AOLNode **lastPtr = &(result->aol_mat->rows[i]);
 
         while (current1 != NULL && current2 != NULL) {
             if (current1->col == current2->col) {
@@ -106,9 +108,9 @@ SparseMat *subAOL(SparseMat *mat1, SparseMat *mat2) {
     }
 
     for (ulint i = 0; i < rows; i++) {
-        AOLNode *current1 = mat1->aol_mat->row[i];
-        AOLNode *current2 = mat2->aol_mat->row[i];
-        AOLNode **lastPtr = &(result->aol_mat->row[i]);
+        AOLNode *current1 = mat1->aol_mat->rows[i];
+        AOLNode *current2 = mat2->aol_mat->rows[i];
+        AOLNode **lastPtr = &(result->aol_mat->rows[i]);
 
         while (current1 != NULL && current2 != NULL) {
             if (current1->col == current2->col) {
@@ -207,7 +209,7 @@ void scalarMultiplyAOL(SparseMat *mat, lint scalar) {
     for (ulint i = 0; i < mat->rows; i++) {
         AOLNode *current = mat->aol_mat->rows[i];
         while (current != NULL) {
-            current->val *= scalar;
+            current->data *= scalar;
             current = current->next;
         }
     }
