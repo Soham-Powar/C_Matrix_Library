@@ -175,7 +175,8 @@ void transpose(SparseMat *mat) {
             printf("Error during AOL to COO conversion. Aborting transpose.\n");
             return;
         }
-        _deleteAOL(mat);
+        _deleteAOL(
+            mat);  // Delete AOL representation after successful conversion
     } else if (mat->csr_mat) {
         // convCSRtoCOO(mat);
         // Handle CSR conversion if needed
@@ -187,18 +188,13 @@ void transpose(SparseMat *mat) {
         _flag = 3001;  // Error flag for transposition
         return;
     }
-
-    _printCOO(mat);
-
     // Transpose by swapping rows and columns in COO representation
     for (int i = 0; i < mat->nnz; i++) {
         int temp_val = mat->coo_mat->arr[i].col;
         mat->coo_mat->arr[i].col = mat->coo_mat->arr[i].row;
         mat->coo_mat->arr[i].row = temp_val;
     }
-
     _flag = 0;  // Transpose successful
-    _printCOO(mat);
 }
 
 void scalarMultiplyAOL(SparseMat *mat, lint scalar) {
