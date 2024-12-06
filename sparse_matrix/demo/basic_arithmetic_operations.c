@@ -169,6 +169,16 @@ SparseMat *subAOL(SparseMat *mat1, SparseMat *mat2) {
 
 //transpose function
 
+int compareCOO(const void *a, const void *b) {
+    COONode *nodeA = (COONode *)a;
+    COONode *nodeB = (COONode *)b;
+
+    if (nodeA->row != nodeB->row) {
+        return (nodeA->row - nodeB->row);
+    }
+    return (nodeA->col - nodeB->col);
+}
+
 void transpose(SparseMat *mat) {
     if (mat->aol_mat) {
         convAOLtoCOO(mat);
@@ -179,9 +189,6 @@ void transpose(SparseMat *mat) {
         }
         _deleteAOL(
             mat);  // Delete AOL representation after successful conversion
-    } else if (mat->csr_mat) {
-        // convCSRtoCOO(mat);
-        // Handle CSR conversion if needed
     }
 
     // Ensure COO matrix is initialized correctly
@@ -190,12 +197,17 @@ void transpose(SparseMat *mat) {
         _flag = 3001;  // Error flag for transposition
         return;
     }
+
     // Transpose by swapping rows and columns in COO representation
-    for (int i = 0; i < mat->nnz; i++) {
-        int temp_val = mat->coo_mat->arr[i].col;
+    for (ulint i = 0; i < mat->nnz; i++) {
+        ulint temp_val = mat->coo_mat->arr[i].col;
         mat->coo_mat->arr[i].col = mat->coo_mat->arr[i].row;
         mat->coo_mat->arr[i].row = temp_val;
     }
+
+    // Sort the COO representation after transposing
+    qsort(mat->coo_mat->arr, mat->nnz, sizeof(COONode), compareCOO);
+
     _flag = 0;  // Transpose successful
 }
 
@@ -249,5 +261,126 @@ ulint trace(SparseMat *mat) {
     _printCOO(mat);
     return trace;
 }
+
+SparseMat *_copySparseMatrix(SparseMat *mat) {
+    // Allocate memory for the copied matrix
+    SparseMat *copyMat = (SparseMat *)malloc(sizeof(SparseMat));
+    if (!copyMat) {
+        printf("Memory allocation failed for _copySparseMatrix.\n");
+        return NULL;
+    }
+
+    // Initialize the copied matrix
+    initSparseMat(copyMat, mat->rows, mat->cols, mat->imptype);
+
+    // Copy COO representation if it exists
+    if (mat->coo_mat != NULL) {
+        copyMat->nnz = mat->nnz;
+        copyMat->coo_mat->arr = (COONode *)malloc(mat->nnz * sizeof(COONode));
+        for (ulint i = 0; i < mat->nnz; i++) {
+            copyMat->coo_mat->arr[i].row = mat->coo_mat->arr[i].row;
+            copyMat->coo_mat->arr[i].col = mat->coo_mat->arr[i].col;
+            copyMat->coo_mat->arr[i].data = mat->coo_mat->arr[i].data;
+        }
+    }
+
+    return copyMat;
+}
+
+bool __isEqual(SparseMat *mat1, SparseMat *mat2) {
+    if (mat1->rows != mat2->rows || mat1->cols != mat2->cols ||
+        mat1->nnz != mat2->nnz) {
+        printf("Matrix dimensions or nnz mismatch.\n");
+        return false;
+    }
+
+    for (ulint i = 0; i < mat1->nnz; i++) {
+        if (mat1->coo_mat->arr[i].row != mat2->coo_mat->arr[i].row ||
+            mat1->coo_mat->arr[i].col != mat2->coo_mat->arr[i].col ||
+            mat1->coo_mat->arr[i].data != mat2->coo_mat->arr[i].data) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool isSymmetric(SparseMat *mat) {
+    if (mat->rows != mat->cols) {
+        return false;  // Non-square matrices cannot be symmetric
+    }
+
+    SparseMat *copiedMat = __copySparseMatrix(mat);
+    if (!copiedMat) {
+        printf("Error creating a copy of the matrix.\n");
+        return false;
+    }
+
+    // Step 2: Transpose the copied matrix
+    transpose(copiedMat);
+
+    // Step 3: Compare the original matrix with the transposed matrix
+    bool symmetric = ___isEqual(mat, copiedMat);
+
+    // Step 4: Free the copied matrix memory
+
+    return symmetric;
+}
+
+SparseMat *dotProductAOL(SparseMat *mat1, SparseMat *mat2) {
+    // Check for dimension mismatch
+    if (mat1->rows != mat2->rows || mat1->cols != mat2->cols) {
+        printf("Matrices must have the same dimensions.\n");
+        _flag = 4001;  // Set error code for dimension mismatch
+        return NULL;
+    }
+
+    ulint rows = mat1->rows;
+    ulint cols = mat1->cols;
+
+    // Initialize the result matrix
+    SparseMat *result = (SparseMat *)malloc(sizeof(SparseMat));
+    if (result == NULL) {
+        _flag = 2003;  // Memory allocation error
+        return NULL;
+    }
+    initSparseMat(result, rows, cols, 0);
+    if (_flag != 0) {
+        free(result);
+        return NULL;
+    }
+
+    // Traverse each row of the matrices
+    for (ulint i = 0; i < rows; i++) {
+        AOLNode *current1 = mat1->aol_mat->rows[i];
+        AOLNode *current2 = mat2->aol_mat->rows[i];
+        AOLNode **lastPtr = &(result->aol_mat->rows[i]);
+
+        // Traverse through non-zero elements in both matrices
+        while (current1 != NULL && current2 != NULL) {
+            if (current1->col == current2->col) {
+                // Element-wise multiplication for matching column indices
+                lint product = current1->data * current2->data;
+                if (product != 0) {  // Only store non-zero results
+                    *lastPtr = _newAOLNode(product, current1->col);
+                    if (*lastPtr == NULL) {
+                        return NULL;  // Handle memory allocation error
+                    }
+                    lastPtr = &((*lastPtr)->next);
+                    result->nnz++;  // Increase non-zero count
+                }
+                current1 = current1->next;
+                current2 = current2->next;
+            } else if (current1->col < current2->col) {
+                current1 = current1->next;
+            } else {
+                current2 = current2->next;
+            }
+        }
+    }
+
+    _flag = 0;  // Indicate success
+    return result;
+}
+
 
 
