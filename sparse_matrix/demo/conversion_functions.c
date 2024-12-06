@@ -20,6 +20,7 @@ void convAOLtoCOO(SparseMat *aol, SparseMat *coo) {
             coo->coo_mat->arr[coo_index].col = temp->col;
             coo->coo_mat->arr[coo_index].row = i;
             coo_index++; 
+            temp = temp->next;
         }   
     }
     return;
