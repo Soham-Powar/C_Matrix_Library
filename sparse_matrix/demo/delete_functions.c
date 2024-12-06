@@ -62,14 +62,19 @@ void _deleteAOL(SparseMat *mat) {
         }
     } // deletes all the data nodes
     temp_rows = mat->aol_mat->rows; 
+    mat->aol_mat->rows = NULL;
     free(temp_rows); //deletes the double node pointer array
     temp_aol = mat->aol_mat;
+    mat->aol_mat = NULL;
     free(temp_aol); //deletes the AOLSparse variable
     return;
 }
 
 void deleteSparseMat(SparseMat *mat) {
-    if(mat->imptype == 0) {
+    if(mat == NULL) {
+        _flag = 0001;
+    }
+    else if(mat->imptype == 0) {
         _deleteAOL(mat); 
     }
     else if(mat->imptype == 1) {
@@ -81,6 +86,7 @@ void deleteSparseMat(SparseMat *mat) {
     else {
         _flag = 0001;
     }
-    mat->nnz = 0; //sets the number of non zero entries in the matrix to zero
+    mat->cols = mat->rows = mat->nnz = 0; //sets the number of non zero entries in the matrix to zero
+    mat->imptype = -1;
     return;
 }
