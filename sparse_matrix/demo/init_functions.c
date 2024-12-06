@@ -44,6 +44,8 @@ void _initCSR(CSRSparse **mat, ulint rows) {
  *      no. which can be checked with checkErr().
  */
 void initSparseMat(SparseMat *mat, ulint rows, ulint cols, sint imptype) {
+    deleteSparseMat(mat);
+    _flag = 0000;
     mat->rows = rows; //stored the number of rows
     mat->cols = cols; //stored the number of columns
     mat->nnz = 0; //initialized the number of nonzero entries in the matrix to 0
