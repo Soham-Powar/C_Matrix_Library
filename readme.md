@@ -8,6 +8,11 @@ This project implements a sparse matrix library in C, supporting three matrix re
 - **Matrix Operations**: Supports addition, dot product, and transpose.
 - **Memory Management**: Includes functions for dynamically managing memory and deleting matrices.
 - **Error Handling**: Comprehensive error checking using the `_flag` system.
+- **Multiple Representations**:
+  - AOL: Linked list representation for each row.
+  - COO: List of non-zero elements with their row and column indices.
+  - CSR: Compact storage with row pointers and non-zero elements.
+
 
 ## Requirements
 - C Compiler (e.g., GCC)
