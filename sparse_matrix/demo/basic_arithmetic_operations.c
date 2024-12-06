@@ -324,4 +324,61 @@ bool isSymmetric(SparseMat *mat) {
     return symmetric;
 }
 
+SparseMat *dotProductAOL(SparseMat *mat1, SparseMat *mat2) {
+    // Check for dimension mismatch
+    if (mat1->rows != mat2->rows || mat1->cols != mat2->cols) {
+        printf("Matrices must have the same dimensions.\n");
+        _flag = 4001;  // Set error code for dimension mismatch
+        return NULL;
+    }
+
+    ulint rows = mat1->rows;
+    ulint cols = mat1->cols;
+
+    // Initialize the result matrix
+    SparseMat *result = (SparseMat *)malloc(sizeof(SparseMat));
+    if (result == NULL) {
+        _flag = 2003;  // Memory allocation error
+        return NULL;
+    }
+    initSparseMat(result, rows, cols, 0);
+    if (_flag != 0) {
+        free(result);
+        return NULL;
+    }
+
+    // Traverse each row of the matrices
+    for (ulint i = 0; i < rows; i++) {
+        AOLNode *current1 = mat1->aol_mat->rows[i];
+        AOLNode *current2 = mat2->aol_mat->rows[i];
+        AOLNode **lastPtr = &(result->aol_mat->rows[i]);
+
+        // Traverse through non-zero elements in both matrices
+        while (current1 != NULL && current2 != NULL) {
+            if (current1->col == current2->col) {
+                // Element-wise multiplication for matching column indices
+                lint product = current1->data * current2->data;
+                if (product != 0) {  // Only store non-zero results
+                    *lastPtr = _newAOLNode(product, current1->col);
+                    if (*lastPtr == NULL) {
+                        return NULL;  // Handle memory allocation error
+                    }
+                    lastPtr = &((*lastPtr)->next);
+                    result->nnz++;  // Increase non-zero count
+                }
+                current1 = current1->next;
+                current2 = current2->next;
+            } else if (current1->col < current2->col) {
+                current1 = current1->next;
+            } else {
+                current2 = current2->next;
+            }
+        }
+    }
+
+    _flag = 0;  // Indicate success
+    return result;
+}
+
+
 
