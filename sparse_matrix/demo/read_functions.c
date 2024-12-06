@@ -54,9 +54,12 @@ void _readCSR(SparseMat *mat) {
     //new AOL matrix
     SparseMat temp;
     initSparseMat(&temp, mat->rows, mat->cols, 0);
+    if(_flag == 1002) return;
     readSparseMat(&temp);
+    if(_flag == 2002 || _flag == 2003) return;
     //convert above AOL to original CSR
     convAOLtoCSR(&temp, mat);
+    if(_flag == 5001 || _flag == 1002) return;
     deleteSparseMat(&temp); //delete AOL
     return;
 }
@@ -69,9 +72,12 @@ void _readCOO(SparseMat *mat) {
     //new AOL matrix
     SparseMat temp;
     initSparseMat(&temp, mat->rows, mat->cols, 0);
+    if(_flag == 1002) return;
     readSparseMat(&temp);
+    if(_flag == 2002 || _flag == 2003) return;
     //convert above AOL to original COO
     convAOLtoCOO(&temp, mat);
+    if(_flag == 5001 || _flag == 1002) return;
     deleteSparseMat(&temp); //delete AOL
     return;
 }
@@ -79,19 +85,35 @@ void _readCOO(SparseMat *mat) {
 /* this function abstractly reads the sparse matrix. for reading a specific implementation a specific
  * function is included in this function*/
 void readSparseMat(SparseMat *mat) {
+    ulint temp_rows, temp_cols;
     if(mat->rows == 0 || mat->cols == 0) {
-        _flag = 2001;
+        _flag = 0001;
     }
     else if(mat->imptype == 0) {
+        //check if matrix already contains data
+        if(mat->nnz != 0) {
+            temp_rows = mat->rows; temp_cols = mat->cols;
+            deleteSparseMat(mat);
+            initSparseMat(mat, temp_rows, temp_cols, 0);
+        }
         printf("Input %lu X %lu Matrix\n", mat->rows, mat->rows);
         _readAOL(&(mat->aol_mat), mat->rows, mat->cols, &mat->nnz);
     } //read in AOL implementation
+
     else if(mat->imptype == 1) {
-        printf("Input %lu X %lu Matrix\n", mat->rows, mat->rows);
+        //check if matrix already contains data
+        if(mat->nnz != 0) {
+            temp_rows = mat->rows; temp_cols = mat->cols;
+            deleteSparseMat(mat);
+            initSparseMat(mat, temp_rows, temp_cols, 1);
+        }
+        //printf("Input %lu X %lu Matrix\n", mat->rows, mat->rows);
         _readCOO(mat);
     } //read in COO implementation
+
     else if(mat->imptype == 2) {
-        printf("Input %lu X %lu Matrix\n", mat->rows, mat->rows);
+        
+        //printf("Input %lu X %lu Matrix\n", mat->rows, mat->rows);
         _readCSR(mat);
     } //read in CSR implementation
     else {
