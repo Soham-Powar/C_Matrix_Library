@@ -198,3 +198,21 @@ void transpose(SparseMat *mat) {
     _flag = 0;  // Transpose successful
     _printCOO(mat);
 }
+
+void scalarMultiplyAOL(SparseMat *mat, lint scalar) {
+
+     if (mat == NULL || mat->aol_mat == NULL) {
+        _flag = 3002; // matrix contains no data;
+        return;
+    }
+
+    for (ulint i = 0; i < mat->rows; i++) {
+        AOLNode *current = mat->aol_mat->rows[i];
+        while (current != NULL) {
+            current->val *= scalar;
+            current = current->next;
+        }
+    }
+}
+
+
