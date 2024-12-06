@@ -22,9 +22,9 @@ SparseMat *addAOL(SparseMat *mat1, SparseMat *mat2) {
     }
 
     for (ulint i = 0; i < rows; i++) {
-        AOLNode *current1 = mat1->aol_mat->row[i];
-        AOLNode *current2 = mat2->aol_mat->row[i];
-        AOLNode **lastPtr = &(result->aol_mat->row[i]);
+        AOLNode *current1 = mat1->aol_mat->rows[i];
+        AOLNode *current2 = mat2->aol_mat->rows[i];
+        AOLNode **lastPtr = &(result->aol_mat->rows[i]);
 
         while (current1 != NULL && current2 != NULL) {
             if (current1->col == current2->col) {
@@ -106,9 +106,9 @@ SparseMat *subAOL(SparseMat *mat1, SparseMat *mat2) {
     }
 
     for (ulint i = 0; i < rows; i++) {
-        AOLNode *current1 = mat1->aol_mat->row[i];
-        AOLNode *current2 = mat2->aol_mat->row[i];
-        AOLNode **lastPtr = &(result->aol_mat->row[i]);
+        AOLNode *current1 = mat1->aol_mat->rows[i];
+        AOLNode *current2 = mat2->aol_mat->rows[i];
+        AOLNode **lastPtr = &(result->aol_mat->rows[i]);
 
         while (current1 != NULL && current2 != NULL) {
             if (current1->col == current2->col) {
