@@ -8,15 +8,19 @@ void _printCOO(SparseMat *mat) {
     ulint rows = mat->rows;
     ulint cols = mat->cols;
     ulint nnz = mat->nnz;
-    ulint indexCOO = 0;
 
+    // Print matrix row by row
     for (ulint i = 0; i < rows; i++) {
         for (ulint j = 0; j < cols; j++) {
-            if (indexCOO < nnz && temp->arr[indexCOO].row == i &&
-                temp->arr[indexCOO].col == j) {
-                printf("%ld ", temp->arr[indexCOO].data);
-                indexCOO++;
-            } else {
+            int found = 0;  // Flag to track if the current (i, j) has a value
+            for (ulint k = 0; k < nnz; k++) {
+                if (temp->arr[k].row == i && temp->arr[k].col == j) {
+                    printf("%ld ", temp->arr[k].data);
+                    found = 1;
+                    break;  // Exit loop once the value is printed
+                }
+            }
+            if (!found) {
                 printf("0 ");
             }
         }
