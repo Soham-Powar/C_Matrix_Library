@@ -130,7 +130,7 @@ SparseMat *subAOL(SparseMat *mat1, SparseMat *mat2) {
                 result->nnz++;
                 current1 = current1->next;
             } else {
-                *lastPtr = _newAOLNode(current2->data, current2->col);
+                *lastPtr = _newAOLNode(-(current2->data), current2->col);
                 if (*lastPtr == NULL)
                     return NULL;  // Handle memory allocation error
                 lastPtr = &((*lastPtr)->next);
