@@ -3,7 +3,7 @@
 
 #include "head.h"
 
-void printCOO(SparseMat *mat) {
+void _printCOO(SparseMat *mat) {
     if (mat == NULL || mat->coo_mat == NULL || mat->coo_mat->arr == NULL) {
         printf("Matrix is not initialized or is empty.\n");
         return;
@@ -19,7 +19,7 @@ void printCOO(SparseMat *mat) {
         for (ulint j = 0; j < cols; j++) {
             if (indexCOO < nnz && temp->arr[indexCOO].row == i &&
                 temp->arr[indexCOO].col == j) {
-                print("%ld ", temp->arr[indexCOO].data);
+                printf("%ld ", temp->arr[indexCOO].data);
                 indexCOO++;
             } else {
                 printf("0 ");
