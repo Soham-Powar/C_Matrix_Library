@@ -81,7 +81,7 @@ SparseMat *addAOL(SparseMat *mat1, SparseMat *mat2) {
     _flag = 0;  // Indicate success
     return result;
 }
-
+//checked
 //Subtraction of two matirices of same order.
 
 SparseMat *subAOL(SparseMat *mat1, SparseMat *mat2) {
@@ -165,7 +165,7 @@ SparseMat *subAOL(SparseMat *mat1, SparseMat *mat2) {
     _flag = 0;  // Indicate success
     return result;
 }
-
+//checked
 
 //transpose function
 
@@ -181,14 +181,17 @@ int compareCOO(const void *a, const void *b) {
 
 void transpose(SparseMat *mat) {
     if (mat->aol_mat) {
-        convAOLtoCOO(mat);
-
-        if (_flag != 0) {
-            printf("Error during AOL to COO conversion. Aborting transpose.\n");
-            return;
+        SparseMat *temp;
+        temp = (SparseMat *) malloc(sizeof(SparseMat));
+        if(temp == NULL) {
+            _flag = 0001; return;
         }
-        _deleteAOL(
-            mat);  // Delete AOL representation after successful conversion
+        initSparseMat(temp, mat->rows, mat->cols, 1);
+        if(_flag == 1002) return;
+        convAOLtoCOO(mat, temp);
+        if(_flag == 5001 || _flag == 1002) return;
+        deleteSparseMat(mat);
+        *mat = *temp;
     }
 
     // Ensure COO matrix is initialized correctly
@@ -226,6 +229,7 @@ void scalarMultiplyAOL(SparseMat *mat, lint scalar) {
         }
     }
 }
+//checked
 
 ulint trace(SparseMat *mat) {
     if (mat->aol_mat) {
@@ -261,6 +265,7 @@ ulint trace(SparseMat *mat) {
     _printCOO(mat);
     return trace;
 }
+//trace unchecked 
 
 SparseMat *_copySparseMatrix(SparseMat *mat) {
     // Allocate memory for the copied matrix
@@ -308,8 +313,21 @@ bool isSymmetric(SparseMat *mat) {
     if (mat->rows != mat->cols) {
         return false;  // Non-square matrices cannot be symmetric
     }
+    else if(mat->imptype == 0) {
+        SparseMat *temp;
+        temp = (SparseMat *) malloc(sizeof(SparseMat));
+        if(temp == NULL) {
+            _flag = 0001; return false;
+        }
+        initSparseMat(temp, mat->rows, mat->cols, 1);
+        if(_flag == 1002) return false;
+        convAOLtoCOO(mat, temp);
+        if(_flag == 5001 || _flag == 1002) return false;
+        deleteSparseMat(mat);
+        *mat = *temp;    
+    }
 
-    SparseMat *copiedMat = __copySparseMatrix(mat);
+    SparseMat *copiedMat = _copySparseMatrix(mat);
     if (!copiedMat) {
         printf("Error creating a copy of the matrix.\n");
         return false;
@@ -319,7 +337,7 @@ bool isSymmetric(SparseMat *mat) {
     transpose(copiedMat);
 
     // Step 3: Compare the original matrix with the transposed matrix
-    bool symmetric = ___isEqual(mat, copiedMat);
+    bool symmetric = _isEqual(mat, copiedMat);
 
     // Step 4: Free the copied matrix memory
 
