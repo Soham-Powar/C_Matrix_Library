@@ -163,3 +163,38 @@ SparseMat *subAOL(SparseMat *mat1, SparseMat *mat2) {
     _flag = 0;  // Indicate success
     return result;
 }
+
+
+//transpose function
+
+void transpose(SparseMat *mat) {
+    if (mat->aol_mat) {
+        convAOLtoCOO(mat);
+        if (_flag != 0) {
+            printf("Error during AOL to COO conversion. Aborting transpose.\n");
+            return;
+        }
+        _deleteAOL(
+            mat);  // Delete AOL representation after successful conversion
+    } else if (mat->csr_mat) {
+        // convCSRtoCOO(mat);
+        // Handle CSR conversion if needed
+    }
+
+    // Ensure COO matrix is initialized correctly
+    if (mat->coo_mat == NULL || mat->coo_mat->arr == NULL) {
+        printf("Error: COO matrix not initialized correctly.\n");
+        _flag = 3001;  // Error flag for transposition
+        return;
+    }
+
+    // Transpose by swapping rows and columns in COO representation
+    for (int i = 0; i < mat->nnz; i++) {
+        int temp_val = mat->coo_mat->arr[i].col;
+        mat->coo_mat->arr[i].col = mat->coo_mat->arr[i].row;
+        mat->coo_mat->arr[i].row = temp_val;
+    }
+
+    _flag = 0;  // Transpose successful
+    _printCOO(mat);
+}
