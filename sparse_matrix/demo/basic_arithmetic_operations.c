@@ -218,4 +218,40 @@ void scalarMultiplyAOL(SparseMat *mat, lint scalar) {
     }
 }
 
+ulint trace(SparseMat *mat) {
+    if (mat->aol_mat) {
+        convAOLtoCOO(mat);
+
+        if (_flag != 0) {
+            printf("Error during AOL to COO conversion. Aborting transpose.\n");
+            return;
+        }
+        // _deleteAOL(
+        //     mat);  // Delete AOL representation after successful conversion
+    } else if (mat->csr_mat) {
+        // convCSRtoCOO(mat);
+        // Handle CSR conversion if needed
+    }
+
+    // Ensure COO matrix is initialized correctly
+    if (mat->coo_mat == NULL || mat->coo_mat->arr == NULL) {
+        printf("Error: COO matrix not initialized correctly.\n");
+        _flag = 3001;  // Error flag for transposition
+        return;
+    }
+
+    _printCOO(mat);
+    ulint trace = 0;
+
+    // Transpose by swapping rows and columns in COO representation
+    for (int i = 0; i < mat->nnz; i++) {
+        if (mat->coo_mat->arr[i].col == mat->coo_mat->arr[i].row) {
+            trace += mat->coo_mat->arr[i].data;
+        }
+    }
+    _flag = 0;  // Transpose successful
+    _printCOO(mat);
+    return trace;
+}
+
 
