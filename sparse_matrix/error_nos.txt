@@ -14,3 +14,6 @@ To give an error set the following numbers in global '_flag' variable.
 3 - for general write function errors
 
 4 - for general arithmetic function errors
+
+5 - for general conversion errors
+  5001 - aol matrix does not contain data;
