@@ -175,8 +175,7 @@ void transpose(SparseMat *mat) {
             printf("Error during AOL to COO conversion. Aborting transpose.\n");
             return;
         }
-        // _deleteAOL(
-        //     mat);  // Delete AOL representation after successful conversion
+        _deleteAOL(mat);
     } else if (mat->csr_mat) {
         // convCSRtoCOO(mat);
         // Handle CSR conversion if needed
@@ -226,8 +225,7 @@ ulint trace(SparseMat *mat) {
             printf("Error during AOL to COO conversion. Aborting transpose.\n");
             return;
         }
-        // _deleteAOL(
-        //     mat);  // Delete AOL representation after successful conversion
+        _deleteAOL(mat);  // Delete AOL representation after successful conversion
     } else if (mat->csr_mat) {
         // convCSRtoCOO(mat);
         // Handle CSR conversion if needed
