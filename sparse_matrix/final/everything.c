@@ -241,8 +241,9 @@ void _initCSR(CSRSparse **mat, ulint rows) {
  *      no. which can be checked with checkErr().
  */
 void initSparseMat(SparseMat *mat, ulint rows, ulint cols, sint imptype) {
-    deleteSparseMat(mat);
-    _flag = 0000;
+    // deleteSparseMat(mat);
+    // _flag = 0000;
+    printf("herehere\n");
     mat->rows = rows; //stored the number of rows
     mat->cols = cols; //stored the number of columns
     mat->nnz = 0; //initialized the number of nonzero entries in the matrix to 0
@@ -733,13 +734,13 @@ void transpose(SparseMat *mat) {
         if(_flag == 1002) return;
         convAOLtoCOO(mat, temp);
         if(_flag == 5001 || _flag == 1002) return;
-        deleteSparseMat(mat);
+        //deleteSparseMat(mat);
         *mat = *temp;
     }
 
     // Ensure COO matrix is initialized correctly
     if (mat->coo_mat == NULL || mat->coo_mat->arr == NULL) {
-        printf("Error: COO matrix not initialized correctly.\n");
+        //printf("Error: COO matrix not initialized correctly.\n");
         _flag = 3001;  // Error flag for transposition
         return;
     }
@@ -905,19 +906,167 @@ bool isSymmetric(SparseMat *mat) {
 
     return symmetric;
 }
+
+lint trace(SparseMat *mat) {
+    if (mat->aol_mat) {
+        SparseMat *temp;
+        temp = (SparseMat *) malloc(sizeof(SparseMat));
+        if(temp == NULL) {
+            _flag = 0001; return _flag;
+        }
+        initSparseMat(temp, mat->rows, mat->cols, 1);
+        if(_flag == 1002) return _flag;
+        convAOLtoCOO(mat, temp);
+        if(_flag == 5001 || _flag == 1002) return _flag;
+        deleteSparseMat(mat);
+        *mat = *temp;} else if (mat->csr_mat) {
+        // convCSRtoCOO(mat);
+        // Handle CSR conversion if needed
+    }
+
+    // Ensure COO matrix is initialized correctly
+    if (mat->coo_mat == NULL || mat->coo_mat->arr == NULL) {
+        printf("Error: COO matrix not initialized correctly.\n");
+        _flag = 3001;  // Error flag for transposition
+        return _flag;
+    }
+
+    //_printCOO(mat);
+    lint trace = 0;
+
+    // Transpose by swapping rows and columns in COO representation
+    for (int i = 0; i < mat->nnz; i++) {
+        if (mat->coo_mat->arr[i].col == mat->coo_mat->arr[i].row) {
+            trace += mat->coo_mat->arr[i].data;
+        }
+    }
+    _flag = 0;  // Transpose successful
+    //_printCOO(mat);
+    return trace;
+}
 /*******************************************************************/
 //main.c
 int main() {
-    SparseMat mat1;
-    initSparseMat(&mat1, 2, 2, 0);
-    checkErr(_flag);
-    readSparseMat(&mat1);
-    if(isSymmetric(&mat1))
-        printf("YES\n");
-    else 
-        printf("NO\n");
     
-    return 0;
+    //delete
+    // SparseMat mat;
+    // initSparseMat(&mat, 10, 10, 0);
+    // readSparseMat(&mat);
+    // printSparseMat(&mat);
+    // deleteSparseMat(&mat);
+    // printSparseMat(&mat);
+    // return 0;
+
+    
+
+    // //small dense matrix
+    // SparseMat mat1;
+    // initSparseMat(&mat1, 4, 4, 0);
+    // checkErr(_flag);
+    // readSparseMat(&mat1);
+    // checkErr(_flag);
+    // printSparseMat(&mat1);
+    // checkErr(_flag);
+    
+
+    // //transpose
+    // SparseMat mat1;
+    // initSparseMat(&mat1, 4, 4, 1);
+    // checkErr(_flag);
+    // //readSparseMat(&mat1);
+    // //checkErr(_flag);
+    // //printf("here\n");
+    // transpose(&mat1);
+    // checkErr(_flag);
+    // printSparseMat(&mat1);
+    // checkErr(_flag);
+    // return 0;
+
+    // //scalarmultiplyAOl
+    // SparseMat mat1;
+    // initSparseMat(&mat1, 10, 10, 0);
+    // checkErr(_flag);
+    // readSparseMat(&mat1);
+    // checkErr(_flag);
+    // scalarMultiplyAOL(&mat1, 3);
+    // checkErr(_flag);
+    // printSparseMat(&mat1);
+    // checkErr(_flag);
+    // return 0;
+
+    //isSymmetric
+    // SparseMat mat1;
+    // initSparseMat(&mat1, 10, 10, 0);
+    // checkErr(_flag);
+    // readSparseMat(&mat1);
+    // checkErr(_flag);
+    // if(isSymmetric(&mat1)) {
+    //     printf("YES\n");
+    // }
+    // else {
+    //     printf("NO\n");
+    // }
+    // checkErr(_flag);
+    // printSparseMat(&mat1);
+    // checkErr(_flag);
+    // return 0;
+
+    //symmetric
+    // SparseMat mat1;
+    // initSparseMat(&mat1, 2, 2, 0);
+    // checkErr(_flag);
+    // readSparseMat(&mat1);
+    // checkErr(_flag);
+    // if(isSymmetric(&mat1)) {
+    //     printf("YES\n");
+    // }
+    // else {
+    //     printf("NO\n");
+    // }
+    // checkErr(_flag);
+    // printSparseMat(&mat1);
+    // checkErr(_flag);
+    // return 0;
+
+    // //dot product
+    // SparseMat mat1, mat2, *dot;
+    // initSparseMat(&mat1, 4, 4, 0);
+    // checkErr(_flag);
+    // initSparseMat(&mat2, 4, 4, 0);
+    // checkErr(_flag);
+    // readSparseMat(&mat1);
+    // checkErr(_flag);
+    // readSparseMat(&mat2);
+    // checkErr(_flag);
+    // dot = dotProductAOL(&mat1, &mat2);
+    // checkErr(_flag);
+    // printSparseMat(dot);
+    // checkErr(_flag);
+    // return 0;
+
+
+    //trace
+    // SparseMat mat1;
+    // initSparseMat(&mat1, 10, 10, 0);
+    // checkErr(_flag);
+    // readSparseMat(&mat1);
+    // checkErr(_flag);
+    // printf("Trace --> %ld\n", trace(&mat1));
+    // checkErr(_flag);
+    // printSparseMat(&mat1);
+    // checkErr(_flag);
+
+    //small trace
+    // SparseMat mat1;
+    // initSparseMat(&mat1, 4, 4, 0);
+    // checkErr(_flag);
+    // readSparseMat(&mat1);
+    // checkErr(_flag);
+    // printf("Trace --> %ld\n", trace(&mat1));
+    // checkErr(_flag);
+    // printSparseMat(&mat1);
+    // checkErr(_flag);
+
 }
 
 
